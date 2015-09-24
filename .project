@@ -20,10 +20,5 @@
 			<type>2</type>
 			<location>C:/Users/Tobias/Desktop/SWCH/src/build/bin</location>
 		</link>
-		<link>
-			<name>src</name>
-			<type>2</type>
-			<location>C:/Users/Tobias/Desktop/SWCH/src/src</location>
-		</link>
 	</linkedResources>
 </projectDescription>
