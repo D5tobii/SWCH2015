@@ -14,35 +14,32 @@ import sc.plugin2016.IGameHandler;
  * @author and
  */
 public enum LogicFactory {
-	// Verfügbare Taktiken (Implementierungen des IGameHandler) müssen hier
-	// eingetragen wie im Beispiel eingetragen und ihre Klasse angegeben werden
-	RANDOM(RandomLogic.class),
-	
+    // Verfügbare Taktiken (Implementierungen des IGameHandler) müssen hier
+    // eingetragen wie im Beispiel eingetragen und ihre Klasse angegeben werden
+    RANDOM(RandomLogic.class), CONNECTION(MyConnectionLogic.class), LINE(MyLineLogic.class), BLOCK(MyBlockLogic.class),
+    // Die Logik die gewählt wird, wenn kein passender Eintrag zu der Eingabe
+    // gefunden wurde:
+    DEFAULT(MyBlockLogic.class);
 
-	// Die Logik die gewählt wird, wenn kein passender Eintrag zu der Eingabe
-	// gefunden wurde:
-	DEFAULT(MyBlockLogic.class);
+    private Class<? extends IGameHandler> logic;
 
-	private Class<? extends IGameHandler> logic;
+    private LogicFactory(Class<? extends IGameHandler> chosenLogic) {
+	logic = chosenLogic;
+    }
 
-	private LogicFactory(Class<? extends IGameHandler> chosenLogic) {
-		logic = chosenLogic;
-	}
-
-	/**
-	 * Erstellt eine Logik-Instanz und gibt diese zurück
-	 * 
-	 * @param client
-	 *            Der aktuelle Client
-	 * @return Eine Instanz der gewaehlten Logik
-	 * @throws Exception
-	 *             Wenn etwas schief gelaufen ist und keine Instanz erstellt
-	 *             werden konnte, wird eine Exception geworfen!
-	 */
-	public IGameHandler getInstance(AbstractClient client) throws Exception {
-		System.out.println("Erzeuge Instanz von: " + name());
-		return (IGameHandler) logic.getConstructor(client.getClass())
-				.newInstance(client);
-	}
+    /**
+     * Erstellt eine Logik-Instanz und gibt diese zurück
+     * 
+     * @param client
+     *            Der aktuelle Client
+     * @return Eine Instanz der gewaehlten Logik
+     * @throws Exception
+     *             Wenn etwas schief gelaufen ist und keine Instanz erstellt
+     *             werden konnte, wird eine Exception geworfen!
+     */
+    public IGameHandler getInstance(AbstractClient client) throws Exception {
+	System.out.println("Erzeuge Instanz von: " + name());
+	return (IGameHandler) logic.getConstructor(client.getClass()).newInstance(client);
+    }
 
 }
