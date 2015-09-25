@@ -65,7 +65,6 @@ public class MyBlockLogic implements IGameHandler {
      * {@inheritDoc}
      */
     @Override
-    // TODO in der Mitte starten, gucken wo der gegner startet :)
     public void onRequestAction() {
 	// Konsolendokumentation
 	System.out.println("*** Es wurde ein Zug angefordert");
@@ -110,6 +109,7 @@ public class MyBlockLogic implements IGameHandler {
 	    System.out.println("*** setze Strommast auf x=" + selectionFirst.getX() + ", y=" + selectionFirst.getY());
 	} else {
 	    if (!lineMoves.isEmpty()) {
+		System.out.println("Sendee einen LineMove!");
 		Move selectionLine = findBestMove(lineMoves);
 		sendAction(selectionLine);
 		System.out.println("*** setze Strommast auf x=" + selectionLine.getX() + ", y=" + selectionLine.getY());
@@ -157,17 +157,21 @@ public class MyBlockLogic implements IGameHandler {
 
     private ArrayList<Move> collectLineMoves(List<Move> possibleMoves, ArrayList<Field> myFields) {
 	ArrayList<Move> lineMoves = new ArrayList<>();
+	ArrayList<Move> defensiveMoves = new ArrayList<>();
 	if (!myFields.isEmpty()) {
-	    System.out.println("!myFields.isEmpty()");
+	    System.out.println("My fields are not empty");
 	    if (color == PlayerColor.RED) {
-		for (Field field : myFields) {
-		    if (field.getY() == 2 || field.getY() == 21) {
+		System.out.println("I am the red player!");
+		for (int k = 0; k < myFields.size(); k++) {
+		    System.out.println("I am checking myFields: " + myFields.size());
+		    if (myFields.get(k).getY() == 2 || myFields.get(k).getY() == 21) {
 			Field enemyField = null;
+			System.out.println("Checking for aggresive moves");
 			for (int i = 0; i < gameState.getBoard().getFields().length; i++) {
 			    for (int j = 0; j < gameState.getBoard().getFields().length; j++) {
-				if (gameState.getBoard().getOwner(i, j) == color.opponent() && (j <= 2 || j >= 21)) {
+				if (gameState.getBoard().getOwner(i, j) == color.opponent() && (j <= 3 || j >= 20)) {
 				    enemyField = gameState.getBoard().getField(i, j);
-				    System.out.println(enemyField.getY());
+				    System.out.println("enemyField should be set now: " + enemyField);
 				}
 			    }
 			}
@@ -185,25 +189,27 @@ public class MyBlockLogic implements IGameHandler {
 				    }
 				}
 			    }
-			    return lineMoves;
+			    //return lineMoves;
 			} else if (enemyField.getY() <= 2) {
 			    System.out.println("I should make a defensive move");
 			    for (Move move : possibleMoves) {
 				if (move.getY() == 0 && ((move.getX() == myFields.get(0).getX() - 1) || (move.getX() == myFields.get(0).getX() + 1))) {
-				    lineMoves.add(move);
+				    //lineMoves.add(move);
+				    defensiveMoves.add(move);
 				    System.out.println("I added a defensive move now");
 				}
 			    }
-			    return lineMoves;
+			    //return lineMoves;
 			} else if (enemyField.getY() >= 21) {
 			    System.out.println("I should make a defensive move");
 			    for (Move move : possibleMoves) {
 				if (move.getY() == 23 && ((move.getX() == myFields.get(0).getX() - 1) || (move.getX() == myFields.get(0).getX() + 1))) {
-				    lineMoves.add(move);
+				    //lineMoves.add(move);
+				    defensiveMoves.add(move);
 				    System.out.println("I added a defensive move now");
 				}
 			    }
-			    return lineMoves;
+			    //return lineMoves;
 			} else {
 			    for (Field field2 : myFields) {
 				int x1 = field2.getX();
@@ -218,7 +224,7 @@ public class MyBlockLogic implements IGameHandler {
 				    }
 				}
 			    }
-			    return lineMoves;
+			    //return lineMoves;
 			}
 		    } else {
 			for (Field field3 : myFields) {
@@ -234,10 +240,15 @@ public class MyBlockLogic implements IGameHandler {
 				}
 			    }
 			}
-			return lineMoves;
+			//return lineMoves;
 		    }
 		}
-		return null;
+		if (defensiveMoves.isEmpty()) {
+		    return lineMoves;
+		} else {
+		    return defensiveMoves;
+		}
+		
 	    } else {
 		for (Field field : myFields) {
 		    int x1 = field.getX();
@@ -298,13 +309,13 @@ public class MyBlockLogic implements IGameHandler {
     private void checkStart(ArrayList<Field> myFields) {
 	if (start.equals("") && (!myFields.isEmpty())) {
 	    Field firstField = myFields.get(0);
-	    if (firstField.getY() == 0) {
+	    if (firstField.getY() <= 11) {
 		start = "LEFT";
-	    } else if (firstField.getY() == gameState.getBoard().getFields().length - 1) {
+	    } else if (firstField.getY() > 11) {
 		start = "RIGHT";
-	    } else if (firstField.getX() == 0) {
+	    } else if (firstField.getX() <= 11) {
 		start = "TOP";
-	    } else if (firstField.getX() == gameState.getBoard().getFields().length - 1) {
+	    } else if (firstField.getX() > 11) {
 		start = "BOTTOM";
 	    } else {
 		if (color == PlayerColor.BLUE) {
@@ -375,7 +386,6 @@ public class MyBlockLogic implements IGameHandler {
 
     public boolean checkPossibleWire(int x1, int y1, int x2, int y2) {
 	if (((Math.abs(x1 - x2) == 2 && Math.abs(y1 - y2) == 1) || (Math.abs(x1 - x2) == 1 && Math.abs(y1 - y2) == 2))) {
-	    System.out.println("Checking possible wire at x=" + x1 + ", y=" + y1);
 	    boolean val = true;
 	    // 2 rechts 1 runter
 	    if (x2 == x1 + 1 && y2 == y1 + 2) {
@@ -442,7 +452,7 @@ public class MyBlockLogic implements IGameHandler {
 			System.out.println("Path blocked if No.11");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
+		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
 			System.out.println("Path blocked if No.12");
 			val = false;
@@ -549,8 +559,8 @@ public class MyBlockLogic implements IGameHandler {
 			System.out.println("Path blocked if No.30");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1)) {
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1 - 1)) {
 			System.out.println("Path blocked if No.31");
 			val = false;
 		    }
