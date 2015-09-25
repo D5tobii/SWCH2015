@@ -15,7 +15,13 @@ import sc.plugin2016.Move;
 import sc.plugin2016.Player;
 import sc.plugin2016.PlayerColor;
 import sc.shared.GameResult;
-
+/**
+ * 
+ * @author Tobi
+ * 
+ * This Logic build connections into one long line from one end to the other
+ *
+ */
 public class MyLineLogic implements IGameHandler {
 
     private Starter client;

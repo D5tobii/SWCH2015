@@ -15,7 +15,13 @@ import sc.plugin2016.Move;
 import sc.plugin2016.Player;
 import sc.plugin2016.PlayerColor;
 import sc.shared.GameResult;
-
+/**
+ * 
+ * @author Tobi
+ * 
+ * This Logic builds simple Connections, which dont need to get in a Line
+ *
+ */
 public class MyConnectionLogic implements IGameHandler {
 
     private Starter client;

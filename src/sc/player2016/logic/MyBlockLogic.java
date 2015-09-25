@@ -17,6 +17,14 @@ import sc.plugin2016.Player;
 import sc.plugin2016.PlayerColor;
 import sc.shared.GameResult;
 
+/**
+ * 
+ * @author Tobi
+ * 
+ * This Logic is more aggressive and also avoids blocked paths, if they're directly in front
+ * The "Blocking" part is still random and needs further work
+ *
+ */
 public class MyBlockLogic implements IGameHandler {
 
     private Starter client;
@@ -369,7 +377,7 @@ public class MyBlockLogic implements IGameHandler {
 	if (((Math.abs(x1 - x2) == 2 && Math.abs(y1 - y2) == 1) || (Math.abs(x1 - x2) == 1 && Math.abs(y1 - y2) == 2))) {
 	    System.out.println("Checking possible wire at x=" + x1 + ", y=" + y1);
 	    boolean val = true;
-	    // 2 rechts 1 runter, hoffentlich WORKING
+	    // 2 rechts 1 runter
 	    if (x2 == x1 + 1 && y2 == y1 + 2) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
@@ -388,437 +396,391 @@ public class MyBlockLogic implements IGameHandler {
 			System.out.println("Path blocked if No.3");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.4");
-			val = false;
-		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.5");
+			System.out.println("Path blocked if No.4");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.6");
+			System.out.println("Path blocked if No.5");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.7");
+			System.out.println("Path blocked if No.6");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.8");
+			System.out.println("Path blocked if No.7");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.9");
+			System.out.println("Path blocked if No.8");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 + 2 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 + 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
+			System.out.println("Path blocked if No.9");
 			val = false;
 		    }
 		}
 	    }
-	    // 2 rechts 1 hoch, hoffentlich WORKING
+	    // 2 rechts 1 hoch
 	    if (x2 == x1 - 1 && y2 == y1 + 2) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.11");
+			System.out.println("Path blocked if No.10");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.12");
+			System.out.println("Path blocked if No.11");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
-			System.out.println("Path blocked if No.13");
+			System.out.println("Path blocked if No.12");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.14");
+			System.out.println("Path blocked if No.13");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.15");
+			System.out.println("Path blocked if No.14");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.16");
-			val = false;
-		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.17");
+			System.out.println("Path blocked if No.15");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.18");
+			System.out.println("Path blocked if No.16");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.19");
+			System.out.println("Path blocked if No.17");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.20");
+			System.out.println("Path blocked if No.18");
 			val = false;
 		    }
 		}
 	    }
-	    // 1 rechts 2 hoch, TODO
+	    // 1 rechts 2 hoch
 	    if (x2 == x1 - 2 && y2 == y1 + 1) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.21");
+			System.out.println("Path blocked if No.19");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.22");
+			System.out.println("Path blocked if No.20");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 + 1 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 + 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.23");
+			System.out.println("Path blocked if No.21");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.24");
+			System.out.println("Path blocked if No.22");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 - 2 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.25");
+			System.out.println("Path blocked if No.23");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.26");
+			System.out.println("Path blocked if No.24");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.27");
+			System.out.println("Path blocked if No.25");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 3 && connection.y2 == y1)
 			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 3 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.28");
+			System.out.println("Path blocked if No.26");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 2 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 - 2 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.29");
+			System.out.println("Path blocked if No.27");
 			val = false;
 		    }
-		    //Missing, didnt found blocking connection yet
-		    /*
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.30");
-			val = false;
-		    }
-		    */
 		}
 	    }
-	    // 1 rechts 2 runter, TODO
+	    // 1 rechts 2 runter
 	    if (x2 == x1 + 2 && y2 == y1 + 1) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 1 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.31");
+			System.out.println("Path blocked if No.28");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1)
 			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.32");
+			System.out.println("Path blocked if No.29");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 - 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.33");
+			System.out.println("Path blocked if No.30");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 2 && connection.y2 == y1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.34");
+			System.out.println("Path blocked if No.31");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 2 && connection.y1 == y1 && connection.x2 == x1 + 1 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 + 2 && connection.y2 == y1 && connection.x1 == x1 + 1 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.35");
+			System.out.println("Path blocked if No.32");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 + 2 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 + 2 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.36");
+			System.out.println("Path blocked if No.33");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 + 2)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 + 2)) {
-			System.out.println("Path blocked if No.37");
+			System.out.println("Path blocked if No.34");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.38");
+			System.out.println("Path blocked if No.35");
 			val = false;
 		    }
 		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 + 3 && connection.y2 == y1)
 			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 + 3 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.39");
+			System.out.println("Path blocked if No.36");
 			val = false;
 		    }
-		  //Missing, didnt found blocking connection yet
-		    /*
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
-			val = false;
-		    }
-		    */
 		}
 	    }
-	    // 2 links 1 hoch, TODO
+	    // 2 links 1 hoch
 	    if (x2 == x1 - 1 && y2 == y1 - 2) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.1");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 + 1 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 + 1 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.37");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.2");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.38");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
-			System.out.println("Path blocked if No.8");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 1 && connection.y2 == y1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 1 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.39");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.3");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.40");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.4");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 && connection.y2 == y1 - 3)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 && connection.y1 == y1 - 3)) {
+			System.out.println("Path blocked if No.41");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.5");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.42");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.6");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.43");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
-			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.7");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.44");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.9");
-			val = false;
-		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 2 && connection.x2 == x1 - 2 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 2 && connection.x1 == x1 - 2 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.45");
 			val = false;
 		    }
 		}
 	    }
-	    // 2 links 1 runter, TODO
+	    // 2 links 1 runter
 	    if (x2 == x1 + 1 && y2 == y1 - 2) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.1");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 2 && connection.y2 == y1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 2 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.46");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.2");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.47");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
-			System.out.println("Path blocked if No.8");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 2 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 2 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.48");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.3");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.49");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.4");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.50");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.5");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 && connection.y2 == y1 - 3)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 && connection.y1 == y1 - 3)) {
+			System.out.println("Path blocked if No.51");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.6");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.52");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
-			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.7");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.53");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.9");
-			val = false;
-		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
+		    if ((connection.x1 == x1  && connection.y1 == y1 - 2 && connection.x2 == x1 + 2 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 2 && connection.x1 == x1 + 2 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.54");
 			val = false;
 		    }
 		}
 	    }
-	    // 1 links 2 hoch, TODO
+	    // 1 links 2 hoch
 	    if (x2 == x1 - 2 && y2 == y1 - 1) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.1");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 + 1 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 + 1 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.55");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.2");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.56");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
-			System.out.println("Path blocked if No.8");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.57");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.3");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.58");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.4");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.59");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.5");
+		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 3 && connection.y2 == y1)
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 3 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.60");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.6");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.61");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
-			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.7");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.62");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.9");
-			val = false;
-		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
+		    if ((connection.x1 == x1 - 2 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 - 2 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.63");
 			val = false;
 		    }
 		}
 	    }
-	    // 1 links 2 runter, TODO
+	    // 1 links 2 runter
 	    if (x2 == x1 + 2 && y2 == y1 - 1) {
 		ArrayList<Connection> connections = (ArrayList<Connection>) gameState.getBoard().connections;
 		for (Connection connection : connections) {
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
-			System.out.println("Path blocked if No.1");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 - 1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 - 1)) {
+			System.out.println("Path blocked if No.64");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 2 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.2");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.65");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 2 && connection.y2 == y1 - 2)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 2 && connection.y1 == y1 - 2)) {
-			System.out.println("Path blocked if No.8");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 + 2 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 + 2 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.66");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.3");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.67");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.4");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 2 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 -1 && connection.x1 == x1 + 2 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.68");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 2 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 2 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.5");
+		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 3 && connection.y2 == y1)
+			    || (connection.x2 == x1 + 1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 3 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.69");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 1 && connection.x2 == x1 - 1 && connection.y2 == y1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 - 1 && connection.y1 == y1)) {
-			System.out.println("Path blocked if No.6");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 1 && connection.y2 == y1 + 1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 1 && connection.y1 == y1 + 1)) {
+			System.out.println("Path blocked if No.70");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 + 3)
-			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 + 3)) {
-			System.out.println("Path blocked if No.7");
+		    if ((connection.x1 == x1 && connection.y1 == y1 - 1 && connection.x2 == x1 + 2 && connection.y2 == y1)
+			    || (connection.x2 == x1 && connection.y2 == y1 - 1 && connection.x1 == x1 + 2 && connection.y1 == y1)) {
+			System.out.println("Path blocked if No.71");
 			val = false;
 		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.9");
-			val = false;
-		    }
-		    if ((connection.x1 == x1 + 1 && connection.y1 == y1 + 2 && connection.x2 == x1 - 1 && connection.y2 == y1 + 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 2 && connection.x1 == x1 - 1 && connection.y1 == y1 + 1)) {
-			System.out.println("Path blocked if No.10");
+		    if ((connection.x1 == x1 + 2 && connection.y1 == y1 && connection.x2 == x1 + 1 && connection.y2 == y1 - 2)
+			    || (connection.x2 == x1 + 2 && connection.y2 == y1 && connection.x1 == x1 + 1 && connection.y1 == y1 - 2)) {
+			System.out.println("Path blocked if No.72");
 			val = false;
 		    }
 		}
