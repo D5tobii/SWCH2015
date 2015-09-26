@@ -33,6 +33,7 @@ public class MyBlockLogic implements IGameHandler {
     private Player currentPlayer;
     private PlayerColor color;
     private String start = "";
+    private Move myLastMove;
 
     /*
      * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
@@ -107,16 +108,19 @@ public class MyBlockLogic implements IGameHandler {
 	Move selectionFirst = startMoves.get(rand.nextInt(startMoves.size()));
 	if (myFields.isEmpty()) {
 	    sendAction(selectionFirst);
+	    myLastMove = selectionFirst;
 	    System.out.println("*** setze Strommast auf x=" + selectionFirst.getX() + ", y=" + selectionFirst.getY());
 	} else {
 	    if (!lineMoves.isEmpty()) {
 		System.out.println("Sendee einen LineMove!");
 		Move selectionLine = findBestMove(lineMoves);
 		sendAction(selectionLine);
+		myLastMove = selectionLine;
 		System.out.println("*** setze Strommast auf x=" + selectionLine.getX() + ", y=" + selectionLine.getY());
 
 	    } else {
 		sendAction(selection);
+		myLastMove = selection;
 		System.out.println("*** setze Strommast auf x=" + selection.getX() + ", y=" + selection.getY());
 	    }
 	}
@@ -254,8 +258,16 @@ public class MyBlockLogic implements IGameHandler {
 		} else {
 		    return lineMoves;
 		}
-
+		//here starts the blue player, needs more logic
 	    } else {
+		// if abfrage nicht mit mylastmove, besser mit meiner höchsten/niedrigsten Position
+		if (gameState.getLastMove().getX() < myLastMove.getX()) {
+		    start = "BOTTOM";
+		    System.out.println("Enemy made a move to the top");
+		} else {
+		    start = "TOP";
+		    System.out.println("Enemy made a move to the bottom");
+		}
 		for (Field field : myFields) {
 		    int x1 = field.getX();
 		    int y1 = field.getY();
