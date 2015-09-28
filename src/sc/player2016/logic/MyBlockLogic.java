@@ -33,7 +33,6 @@ public class MyBlockLogic implements IGameHandler {
     private Player currentPlayer;
     private PlayerColor color;
     private String start = "";
-    private Move myLastMove;
     private Field myHighestField;
     private Field myLowestField;
 
@@ -61,7 +60,6 @@ public class MyBlockLogic implements IGameHandler {
      */
     @Override
     public void gameEnded(GameResult data, PlayerColor color, String errorMessage) {
-
 	System.out.println("*** Das Spiel ist beendet");
     }
 
@@ -70,19 +68,30 @@ public class MyBlockLogic implements IGameHandler {
      */
     @Override
     public void onRequestAction() {
-	// Konsolendokumentation
-	System.out.println("*** Es wurde ein Zug angefordert");
-	// Beziehe alle möglichen Züge
-	List<Move> possibleMoves = gameState.getPossibleMoves();
-	// Konsolendokumentation
-	System.out.println("*** sende zug: ");
-
-	// ---Setze meine Color, falls nicht schon geschehen
 	setMyColor();
-
-	// ---Hole aktuelles Spielbrett
+	
+	List<Move> possibleMoves = gameState.getPossibleMoves();
 	Board gameBoard = gameState.getBoard();
-	// ---Schreibe alle meine Felder in ein Array
+	
+	ArrayList<Field> myFields = getMyFields(gameBoard);
+	ArrayList<Move> startMoves = collectStartMoves(possibleMoves, gameBoard);
+	checkMyFields(myFields);
+	checkStart(myFields);
+	checkDirection(myFields);
+	ArrayList<Move> lineMoves = collectLineMoves(possibleMoves, myFields);
+	Move selection = possibleMoves.get(rand.nextInt(possibleMoves.size()));
+	Move selectionFirst = startMoves.get(rand.nextInt(startMoves.size()));
+	decideMove(myFields, lineMoves, selection, selectionFirst);
+    }
+    
+    private void setMyColor() {
+	if (color == null) {
+	    color = currentPlayer.getPlayerColor();
+	    System.out.println("Color set manually to " + currentPlayer.getPlayerColor() + " :(");
+	}
+    }
+    
+    private ArrayList<Field> getMyFields(Board gameBoard) {
 	ArrayList<Field> myFields = new ArrayList<>();
 	for (int i = 0; i < gameBoard.getFields().length; i++) {
 	    for (int j = 0; j < gameBoard.getFields().length; j++) {
@@ -91,45 +100,69 @@ public class MyBlockLogic implements IGameHandler {
 		}
 	    }
 	}
-	// ---Konsolendokumentation
-	for (Field field : myFields) {
-	    System.out.println(field);
-	}
-	// ---Erstelle Listen aller möglichen StartMoves, in der eigenen "Zone"
-	ArrayList<Move> startMoves = collectStartMoves(possibleMoves, gameBoard);
-
-	// ---Überprufe wo im ersten Zug bekommen wurde
-	checkStart(myFields);
-
-	checkDirection(myFields);
-
-	checkMyFields(myFields);
-
-	// ---Sammele alle lineMoves
-	ArrayList<Move> lineMoves = collectLineMoves(possibleMoves, myFields);
-
-	Move selection = possibleMoves.get(rand.nextInt(possibleMoves.size()));
-	Move selectionFirst = startMoves.get(rand.nextInt(startMoves.size()));
-	if (myFields.isEmpty()) {
-	    sendAction(selectionFirst);
-	    myLastMove = selectionFirst;
-	    System.out.println("*** setze Strommast auf x=" + selectionFirst.getX() + ", y=" + selectionFirst.getY());
-	} else {
-	    if (!lineMoves.isEmpty()) {
-		System.out.println("Sendee einen LineMove!");
-		Move selectionLine = findBestMove(lineMoves);
-		sendAction(selectionLine);
-		myLastMove = selectionLine;
-		System.out.println("*** setze Strommast auf x=" + selectionLine.getX() + ", y=" + selectionLine.getY());
-
+	return myFields;
+    }
+    
+    private ArrayList<Move> collectLineMoves(List<Move> possibleMoves, ArrayList<Field> myFields) {
+	ArrayList<Move> lineMoves = new ArrayList<>();
+	ArrayList<Move> defensiveMoves = new ArrayList<>();
+	if (!myFields.isEmpty()) {
+	    if (color == PlayerColor.RED) {
+		for (int k = 0; k < myFields.size(); k++) {
+		    if (myFields.get(k).getY() == 2 || myFields.get(k).getY() == 21) {
+			Field enemyField = null;
+			for (int i = 0; i < gameState.getBoard().getFields().length; i++) {
+			    for (int j = 0; j < gameState.getBoard().getFields().length; j++) {
+				if (gameState.getBoard().getOwner(i, j) == color.opponent() && (j <= 3 || j >= 20)) {
+				    enemyField = gameState.getBoard().getField(i, j);
+				}
+			    }
+			}
+			if (enemyField == null) {
+			    findLineMoves(possibleMoves, myFields, lineMoves);
+			} else if (enemyField.getY() <= 2) {
+			    for (Move move : possibleMoves) {
+				if (move.getY() == 0 && ((move.getX() == myFields.get(k).getX() - 1) || (move.getX() == myFields.get(k).getX() + 1))) {
+				    if (checkPossibleWire(myFields.get(k).getX(), myFields.get(k).getY(), move.getX(), move.getY())) {
+					defensiveMoves.add(move);
+				    }
+				}
+			    }
+			} else if (enemyField.getY() >= 21) {
+			    for (Move move : possibleMoves) {
+				if (move.getY() == 23 && ((move.getX() == myFields.get(k).getX() - 1) || (move.getX() == myFields.get(k).getX() + 1))) {
+				    if (checkPossibleWire(myFields.get(k).getX(), myFields.get(k).getY(), move.getX(), move.getY())) {
+					defensiveMoves.add(move);
+				    }
+				}
+			    }
+			} else {
+			    findLineMoves(possibleMoves, myFields, lineMoves);
+			}
+		    } else {
+			findLineMoves(possibleMoves, myFields, lineMoves);
+		    }
+		}
+		if (!defensiveMoves.isEmpty() && !checkBorderField(myFields)) {
+		    return defensiveMoves;
+		} else {
+		    return lineMoves;
+		}
 	    } else {
-		sendAction(selection);
-		myLastMove = selection;
-		System.out.println("*** setze Strommast auf x=" + selection.getX() + ", y=" + selection.getY());
+		if (gameState.getLastMove().getX() < myHighestField.getX()) {
+		    start = "BOTTOM";
+		}
+		if (gameState.getLastMove().getX() >= myLowestField.getX()) {
+		    start = "TOP";
+		}
+		findLineMoves(possibleMoves, myFields, lineMoves);
+		return lineMoves;
 	    }
+	} else {
+	    return null;
 	}
     }
-
+    
     private void checkMyFields(ArrayList<Field> myFields) {
 	if (!myFields.isEmpty()) {
 	    Field highField = myFields.get(0);
@@ -144,6 +177,21 @@ public class MyBlockLogic implements IGameHandler {
 	    }
 	    myHighestField = highField;
 	    myLowestField = lowField;
+	}
+    }
+
+    private void decideMove(ArrayList<Field> myFields, ArrayList<Move> lineMoves, Move selection, Move selectionFirst) {
+	if (myFields.isEmpty()) {
+	    sendAction(selectionFirst);
+	} else {
+	    if (!lineMoves.isEmpty()) {
+		Move selectionLine = findBestMove(lineMoves);
+		sendAction(selectionLine);
+
+	    } else {
+		sendAction(selection);
+
+	    }
 	}
     }
 
@@ -169,7 +217,6 @@ public class MyBlockLogic implements IGameHandler {
 		    }
 		}
 	    }
-	    // Offensive Taktik für rot, start in reihe 2
 	    if (color == PlayerColor.RED) {
 		if (gameBoard.getField(move.getX(), move.getY()).getY() == 2 || gameBoard.getField(move.getX(), move.getY()).getY() == 21) {
 		    if (move.getX() >= 10 && move.getX() <= 14) {
@@ -181,131 +228,19 @@ public class MyBlockLogic implements IGameHandler {
 	return startMoves;
     }
 
-    private ArrayList<Move> collectLineMoves(List<Move> possibleMoves, ArrayList<Field> myFields) {
-	ArrayList<Move> lineMoves = new ArrayList<>();
-	ArrayList<Move> defensiveMoves = new ArrayList<>();
-	if (!myFields.isEmpty()) {
-	    System.out.println("My fields are not empty");
-	    if (color == PlayerColor.RED) {
-		System.out.println("I am the red player!");
-		for (int k = 0; k < myFields.size(); k++) {
-		    System.out.println("I am checking myFields: " + myFields.size());
-		    if (myFields.get(k).getY() == 2 || myFields.get(k).getY() == 21) {
-			Field enemyField = null;
-			System.out.println("Checking for aggresive moves");
-			for (int i = 0; i < gameState.getBoard().getFields().length; i++) {
-			    for (int j = 0; j < gameState.getBoard().getFields().length; j++) {
-				if (gameState.getBoard().getOwner(i, j) == color.opponent() && (j <= 3 || j >= 20)) {
-				    enemyField = gameState.getBoard().getField(i, j);
-				    System.out.println("enemyField should be set now: " + enemyField);
-				}
-			    }
-			}
-			if (enemyField == null) {
-			    for (Field field2 : myFields) {
-				int x1 = field2.getX();
-				int y1 = field2.getY();
-				int x2 = -1;
-				int y2 = -1;
-				for (Move move : possibleMoves) {
-				    x2 = move.getX();
-				    y2 = move.getY();
-				    if (checkPossibleWire(x1, y1, x2, y2)) {
-					lineMoves.add(move);
-				    }
-				}
-			    }
-			    // return lineMoves;
-			} else if (enemyField.getY() <= 2) {
-			    System.out.println("I should make a defensive move");
-			    for (Move move : possibleMoves) {
-				if (move.getY() == 0 && ((move.getX() == myFields.get(k).getX() - 1) || (move.getX() == myFields.get(k).getX() + 1))) {
-				    // lineMoves.add(move);
-				    if (checkPossibleWire(myFields.get(k).getX(), myFields.get(k).getY(), move.getX(), move.getY())) {
-					defensiveMoves.add(move);
-					System.out.println("I added a defensive move now");
-				    }
-				}
-			    }
-			    // return lineMoves;
-			} else if (enemyField.getY() >= 21) {
-			    System.out.println("I should make a defensive move");
-			    for (Move move : possibleMoves) {
-				if (move.getY() == 23 && ((move.getX() == myFields.get(k).getX() - 1) || (move.getX() == myFields.get(k).getX() + 1))) {
-				    // lineMoves.add(move);
-				    if (checkPossibleWire(myFields.get(k).getX(), myFields.get(k).getY(), move.getX(), move.getY())) {
-					defensiveMoves.add(move);
-					System.out.println("I added a defensive move now");
-				    }
-				}
-			    }
-			    // return lineMoves;
-			} else {
-			    for (Field field2 : myFields) {
-				int x1 = field2.getX();
-				int y1 = field2.getY();
-				int x2 = -1;
-				int y2 = -1;
-				for (Move move : possibleMoves) {
-				    x2 = move.getX();
-				    y2 = move.getY();
-				    if (checkPossibleWire(x1, y1, x2, y2)) {
-					lineMoves.add(move);
-				    }
-				}
-			    }
-			    // return lineMoves;
-			}
-		    } else {
-			for (Field field3 : myFields) {
-			    int x1 = field3.getX();
-			    int y1 = field3.getY();
-			    int x2 = -1;
-			    int y2 = -1;
-			    for (Move move : possibleMoves) {
-				x2 = move.getX();
-				y2 = move.getY();
-				if (checkPossibleWire(x1, y1, x2, y2)) {
-				    lineMoves.add(move);
-				}
-			    }
-			}
-			// return lineMoves;
-		    }
+    private void findLineMoves(List<Move> possibleMoves, ArrayList<Field> myFields, ArrayList<Move> lineMoves) {
+	for (Field field3 : myFields) {
+	    int x1 = field3.getX();
+	    int y1 = field3.getY();
+	    int x2 = -1;
+	    int y2 = -1;
+	    for (Move move : possibleMoves) {
+		x2 = move.getX();
+		y2 = move.getY();
+		if (checkPossibleWire(x1, y1, x2, y2)) {
+		    lineMoves.add(move);
 		}
-		if (!defensiveMoves.isEmpty() && !checkBorderField(myFields)) {
-		    System.out.println("Returning defensive moves!");
-		    return defensiveMoves;
-		} else {
-		    return lineMoves;
-		}
-		// here starts the blue player, needs more logic
-	    } else {
-		if (gameState.getLastMove().getX() < myHighestField.getX()) {
-		    start = "BOTTOM";
-		    System.out.println("Enemy made a move to the top");
-		} 
-		if (gameState.getLastMove().getX() >= myLowestField.getX()) {
-		    start = "TOP";
-		    System.out.println("Enemy made a move to the bottom");
-		}
-		for (Field field : myFields) {
-		    int x1 = field.getX();
-		    int y1 = field.getY();
-		    int x2 = -1;
-		    int y2 = -1;
-		    for (Move move : possibleMoves) {
-			x2 = move.getX();
-			y2 = move.getY();
-			if (checkPossibleWire(x1, y1, x2, y2)) {
-			    lineMoves.add(move);
-			}
-		    }
-		}
-		return lineMoves;
 	    }
-	} else {
-	    return null;
 	}
     }
 
@@ -316,15 +251,7 @@ public class MyBlockLogic implements IGameHandler {
 		val = true;
 	    }
 	}
-	System.out.println("Habe ich ein Randfeld: " + val);
 	return val;
-    }
-
-    private void setMyColor() {
-	if (color == null) {
-	    color = currentPlayer.getPlayerColor();
-	    System.out.println("Color set manually to " + currentPlayer.getPlayerColor() + " :(");
-	}
     }
 
     private void checkDirection(ArrayList<Field> myFields) {
@@ -333,10 +260,8 @@ public class MyBlockLogic implements IGameHandler {
 		if (myFields.get(i).getType() == FieldType.BLUE) {
 		    if (myFields.get(i).getX() == 0) {
 			start = "TOP";
-			System.out.println("Start changed to " + start);
 		    } else if (myFields.get(i).getX() == gameState.getBoard().getFields().length - 1) {
 			start = "BOTTOM";
-			System.out.println("Start changed to " + start);
 		    }
 		}
 	    }
@@ -346,10 +271,8 @@ public class MyBlockLogic implements IGameHandler {
 		if (myFields.get(i).getType() == FieldType.RED) {
 		    if (myFields.get(i).getY() == 0) {
 			start = "LEFT";
-			System.out.println("Start changed to " + start);
 		    } else if (myFields.get(i).getY() == gameState.getBoard().getFields().length - 1) {
 			start = "RIGHT";
-			System.out.println("Start changed to " + start);
 		    }
 		}
 	    }
@@ -374,12 +297,12 @@ public class MyBlockLogic implements IGameHandler {
 		    start = "LEFT";
 		}
 	    }
-	    System.out.println("Start has been made " + start);
 	}
     }
 
     private Move findBestMove(ArrayList<Move> moves) {
 	Move move = null;
+	ArrayList<Move> returnMoves = new ArrayList<>();
 	switch (start) {
 	case "LEFT":
 	    for (Move m : moves) {
@@ -391,8 +314,12 @@ public class MyBlockLogic implements IGameHandler {
 		    }
 		}
 	    }
-	    System.out.println("Best Move has been picked at x=" + move.getX() + ", y=" + move.getY());
-	    return move;
+	    for (Move m : moves) {
+		if (m.getY() == move.getY()) {
+		    returnMoves.add(m);
+		}
+	    }
+	    return returnMoves.get(rand.nextInt(returnMoves.size()));
 	case "RIGHT":
 	    for (Move m : moves) {
 		if (move == null) {
@@ -403,8 +330,12 @@ public class MyBlockLogic implements IGameHandler {
 		    }
 		}
 	    }
-	    System.out.println("Best Move has been picked at x=" + move.getX() + ", y=" + move.getY());
-	    return move;
+	    for (Move m : moves) {
+		if (m.getY() == move.getY()) {
+		    returnMoves.add(m);
+		}
+	    }
+	    return returnMoves.get(rand.nextInt(returnMoves.size()));
 	case "BOTTOM":
 	    for (Move m : moves) {
 		if (move == null) {
@@ -415,8 +346,12 @@ public class MyBlockLogic implements IGameHandler {
 		    }
 		}
 	    }
-	    System.out.println("Best Move has been picked at x=" + move.getX() + ", y=" + move.getY());
-	    return move;
+	    for (Move m : moves) {
+		if (m.getY() == move.getY()) {
+		    returnMoves.add(m);
+		}
+	    }
+	    return returnMoves.get(rand.nextInt(returnMoves.size()));
 	case "TOP":
 	    for (Move m : moves) {
 		if (move == null) {
@@ -427,8 +362,12 @@ public class MyBlockLogic implements IGameHandler {
 		    }
 		}
 	    }
-	    System.out.println("Best Move has been picked at x=" + move.getX() + ", y=" + move.getY());
-	    return move;
+	    for (Move m : moves) {
+		if (m.getY() == move.getY()) {
+		    returnMoves.add(m);
+		}
+	    }
+	    return returnMoves.get(rand.nextInt(returnMoves.size()));
 	}
 
 	return null;
@@ -856,9 +795,8 @@ public class MyBlockLogic implements IGameHandler {
     @Override
     public void onUpdate(Player player, Player otherPlayer) {
 	currentPlayer = player;
-
+	
 	System.out.println("*** Spielerwechsel: " + player.getPlayerColor());
-
     }
 
     /**
@@ -878,6 +816,7 @@ public class MyBlockLogic implements IGameHandler {
      */
     @Override
     public void sendAction(Move move) {
+	System.out.println("*** setze Strommast auf x=" + move.getX() + ", y=" + move.getY());
 	client.sendMove(move);
     }
 
