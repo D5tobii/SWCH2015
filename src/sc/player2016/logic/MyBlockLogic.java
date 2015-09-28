@@ -569,7 +569,7 @@ public class MyBlockLogic implements IGameHandler {
 			val = false;
 		    }
 		    if ((connection.x1 == x1 - 1 && connection.y1 == y1 + 1 && connection.x2 == x1 && connection.y2 == y1 - 1)
-			    || (connection.x2 == x1 + 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 - 1)) {
+			    || (connection.x2 == x1 - 1 && connection.y2 == y1 + 1 && connection.x1 == x1 && connection.y1 == y1 - 1)) {
 			System.out.println("Path blocked if No.24");
 			val = false;
 		    }
